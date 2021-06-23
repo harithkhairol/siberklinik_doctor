@@ -27,14 +27,18 @@ class AppointmentController extends Controller
         $user_id = Auth::id();
 
         $appointments = Appointment::where('doctor_id', $user_id)->first();
+
+        $date = "2021-06-18";
+
+        $appointment_today = Appointment::where('doctor_id', $user_id)->where('date', $date)->orderBy('time', 'asc')->get();
          
-        $appointment_today = Appointment::where('doctor_id', $user_id)->where('date', now())->orderBy('time', 'asc')->get();
+        // $appointment_today = Appointment::where('doctor_id', $user_id)->where('date', date('Y-m-d'))->orderBy('time', 'asc')->get();
 
         if(isset($_GET['search'])) {
 
             $appointment_upcoming = Appointment::join(config('app.user_database').'.users', 'appointments.user_id', '=', 'users.id')
-                     ->select('appointments.*', 'users.name', 'users.phone_no')->where('doctor_id', $user_id)
-                     ->where('date','>', now())
+                     ->select('appointments.*', 'appointments.user_id', 'users.name', 'users.phone_no')->where('doctor_id', $user_id)
+                     ->where('date','>', date('Y-m-d'))
                      ->where(function ($query) {
                         $query->where('appointments.type', 'LIKE', '%' . $_GET['search'] . '%')
                             ->orWhere('date', 'LIKE', '%' . $_GET['search'] . '%')
@@ -47,11 +51,11 @@ class AppointmentController extends Controller
         }
         else{
 
-            $appointment_upcoming = Appointment::where('doctor_id', $user_id)->where('date', '>', now())->orderBy('date', 'asc')->orderBy('time', 'asc')->paginate(10);
+            $appointment_upcoming = Appointment::where('doctor_id', $user_id)->where('date', '>', date('Y-m-d'))->orderBy('date', 'asc')->orderBy('time', 'asc')->paginate(10);
 
         }
 
-        $appointment_next_date = Appointment::where('doctor_id', $user_id)->where('date', '>', now())->first();
+        $appointment_next_date = Appointment::where('doctor_id', $user_id)->where('date', '>', date('Y-m-d'))->first();
         
 
         if(isset($appointment_next_date)){
@@ -79,7 +83,7 @@ class AppointmentController extends Controller
             // ->where('doctor_id', $user_id)
             
             $appointment_history = Appointment::join(config('app.user_database').'.users', 'appointments.user_id', '=', 'users.id')
-                     ->select('appointments.*', 'users.name', 'users.phone_no')->where('date','<', now())
+                     ->select('appointments.*', 'users.name', 'users.phone_no')->where('date','<', date('Y-m-d'))
                      ->where('doctor_id', $user_id)
                      ->where(function ($query) {
                         $query->where('type', 'LIKE', '%' . $_GET['search'] . '%')
@@ -93,7 +97,7 @@ class AppointmentController extends Controller
         }
         else{
 
-            $appointment_history = Appointment::where('doctor_id', $user_id)->where('date', '<', now())->orderBy('date', 'asc')->orderBy('time', 'asc')->paginate(10);
+            $appointment_history = Appointment::where('doctor_id', $user_id)->where('date', '<', date('Y-m-d'))->orderBy('date', 'asc')->orderBy('time', 'asc')->paginate(10);
 
         }
 
