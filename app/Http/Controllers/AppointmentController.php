@@ -28,11 +28,11 @@ class AppointmentController extends Controller
 
         $appointments = Appointment::where('doctor_id', $user_id)->first();
 
-        $date = "2021-06-18";
+        // $date = "2021-06-18";
 
-        $appointment_today = Appointment::where('doctor_id', $user_id)->where('date', $date)->orderBy('time', 'asc')->get();
+        // $appointment_today = Appointment::where('doctor_id', $user_id)->where('date', $date)->orderBy('time', 'asc')->get();
          
-        // $appointment_today = Appointment::where('doctor_id', $user_id)->where('date', date('Y-m-d'))->orderBy('time', 'asc')->get();
+        $appointment_today = Appointment::where('doctor_id', $user_id)->where('date', date('Y-m-d'))->orderBy('time', 'asc')->get();
 
         if(isset($_GET['search'])) {
 
